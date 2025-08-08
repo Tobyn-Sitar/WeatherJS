@@ -1,200 +1,73 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { ModeToggle } from './components/ui/mode-toggle'
-import { Card, CardContent } from './components/ui/card'
-import { Input } from './components/ui/input'
-import { Button } from './components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from './components/ui/popover'
-import { fetchCityWeather, fetch5DayForecast, searchCities } from './lib/weather-api'
-import { groupForecastsByDay } from './lib/weather-utils'
-
-const CITIES = [
-  'New York',
-  'London', 
-  'San Francisco',
-  'Tokyo',
-  'Paris',
-  'Berlin',
-  'Sydney',
-  'Toronto'
-]
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs'
+import { HomePage } from './components/HomePage'
+import { AboutPage } from './components/AboutPage'
+import { ApiPage } from './components/ApiPage'
+import { CloudSun } from 'lucide-react'
 
 function App() {
-  const [selectedCity, setSelectedCity] = useState('')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [cityWeather, setCityWeather] = useState({})
-  const [forecast, setForecast] = useState([])
-  const [suggestions, setSuggestions] = useState([])
-  const [showSuggestions, setShowSuggestions] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-
-  // Load weather data for header cities on mount
-  useEffect(() => {
-    const loadCityWeather = async () => {
-      const weatherData = {}
-      for (const city of CITIES) {
-        const weather = await fetchCityWeather(city)
-        if (weather) {
-          weatherData[city] = weather.temp
-        }
-      }
-      setCityWeather(weatherData)
-    }
-    loadCityWeather()
-  }, [])
-
-  // Handle search input changes for autocomplete
-  useEffect(() => {
-    const handleSearch = async () => {
-      if (searchQuery.length >= 2) {
-        const results = await searchCities(searchQuery)
-        setSuggestions(results)
-        setShowSuggestions(results.length > 0)
-      } else {
-        setSuggestions([])
-        setShowSuggestions(false)
-      }
-    }
-    
-    const debounceTimer = setTimeout(handleSearch, 300)
-    return () => clearTimeout(debounceTimer)
-  }, [searchQuery])
+  const [activeTab, setActiveTab] = useState("home")
 
   const handleLogoClick = () => {
-    setSelectedCity('')
-    setSearchQuery('')
-    setForecast([])
-    setSuggestions([])
-    setShowSuggestions(false)
-  }
-
-  const handleCityClick = async (cityName) => {
-    setSelectedCity(cityName)
-    await fetchWeather(cityName)
-  }
-
-  const fetchWeather = async (cityName) => {
-    if (!cityName.trim()) return
-    
-    setIsLoading(true)
-    try {
-      const forecastData = await fetch5DayForecast(cityName)
-      const groupedForecast = groupForecastsByDay(forecastData)
-      setForecast(groupedForecast)
-      setSelectedCity(cityName)
-    } catch (error) {
-      console.error('Error fetching weather:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleSuggestionClick = (suggestion) => {
-    setSearchQuery(suggestion.displayName)
-    setShowSuggestions(false)
-    fetchWeather(suggestion.name)
-  }
-
-  const handleSearchSubmit = () => {
-    fetchWeather(searchQuery)
-    setShowSuggestions(false)
+    setActiveTab("home")
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card">
+      <header className="border-b bg-card sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo and Theme Toggle */}
-            <div className="flex items-center gap-4">
-              <button 
-                onClick={handleLogoClick}
-                className="text-2xl font-bold text-foreground hover:text-primary transition-colors"
-              >
-                WeatherJS
-              </button>
-              <ModeToggle />
-            </div>
+            <button 
+              onClick={handleLogoClick}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            >
+              <CloudSun className="h-8 w-8 text-primary" />
+              <h1 className="text-2xl font-bold text-foreground">WeatherJS</h1>
+            </button>
             
-            {/* City Cards */}
-            <div className="flex gap-2 overflow-hidden">
-              {CITIES.map((city) => (
-                <Card 
-                  key={city}
-                  className="cursor-pointer hover:bg-accent transition-colors min-w-[120px]"
-                  onClick={() => handleCityClick(city)}
-                >
-                  <CardContent className="p-3 text-center">
-                    <div className="font-medium text-sm">{city}</div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {cityWeather[city] ? `${cityWeather[city]}°F` : 'Loading...'}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <TabsList className="grid grid-cols-3 w-full max-w-md">
+              <TabsTrigger value="home">Home</TabsTrigger>
+              <TabsTrigger value="about">About</TabsTrigger>
+              <TabsTrigger value="api">API</TabsTrigger>
+            </TabsList>
+            
+            <ModeToggle />
           </div>
         </div>
       </header>
 
-      {/* Search Section */}
+      {/* Main Content with Tabs */}
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-center">
-          <div className="flex gap-2 w-full max-w-md">
-            <Popover open={showSuggestions} onOpenChange={setShowSuggestions}>
-              <PopoverTrigger asChild>
-                <div className="flex-1">
-                  <Input
-                    placeholder="Search for a city..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleSearchSubmit()
-                      }
-                    }}
-                  />
-                </div>
-              </PopoverTrigger>
-              <PopoverContent className="w-full p-0">
-                {suggestions.map((suggestion, index) => (
-                  <div 
-                    key={index}
-                    className="p-2 hover:bg-accent cursor-pointer"
-                    onClick={() => handleSuggestionClick(suggestion)}
-                  >
-                    {suggestion.displayName}
-                  </div>
-                ))}
-              </PopoverContent>
-            </Popover>
-            <Button onClick={handleSearchSubmit} disabled={isLoading}>
-              {isLoading ? 'Loading...' : 'Search'}
-            </Button>
-          </div>
-        </div>
+        <TabsContent value="home" className="mt-0">
+          <HomePage />
+        </TabsContent>
+        
+        <TabsContent value="about" className="mt-0">
+          <AboutPage />
+        </TabsContent>
+        
+        <TabsContent value="api" className="mt-0">
+          <ApiPage />
+        </TabsContent>
       </div>
 
-      {/* Forecast Section */}
-      {forecast.length > 0 && (
-        <div className="container mx-auto px-4 pb-8">
-          <div className="flex justify-center">
-            <div className="flex gap-4 overflow-x-auto">
-              {forecast.map((day, index) => (
-                <Card key={index} className="min-w-[200px]">
-                  <CardContent className="p-4 text-center">
-                    <div className="font-medium">{day.dayOfWeek}</div>
-                    <div className="text-sm text-muted-foreground">{day.time}</div>
-                    <div className="text-lg font-bold mt-2">{day.temp}°F</div>
-                    <div className="text-sm text-muted-foreground mt-1">{day.description}</div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+      {/* Footer */}
+      <footer className="border-t bg-card mt-32">
+        <div className="container mx-auto px-4 py-6">
+          <div className="text-center text-sm text-muted-foreground">
+            <p>© 2024 WeatherJS. Built with React, TailwindCSS, and ShadCN/UI.</p>
+            <p className="mt-1">
+              Weather data provided by{' '}
+              <a href="https://openweathermap.org/" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                OpenWeatherMap
+              </a>
+            </p>
           </div>
         </div>
-      )}
-    </div>
+      </footer>
+    </Tabs>
   )
 }
 
