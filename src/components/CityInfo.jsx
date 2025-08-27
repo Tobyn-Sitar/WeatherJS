@@ -1,34 +1,24 @@
-import React from 'react';
+import React from 'react'
 
 const CityInfo = ({ data }) => {
-  if (!data || !data.current) {
-    return null;
-  }
-
-  const { current, location } = data;
+  if (!data) return null
+  const { city, country, tempF, feelsLikeF, description, icon, humidity, windMph } = data
 
   return (
-    <div>
-      <h2>Current Weather</h2>
-      <div>
-        <h3>{location?.name || 'Unknown City'}</h3>
-        {location?.country && <p>Country: {location.country}</p>}
-        {location?.region && <p>Region: {location.region}</p>}
-      </div>
-      <div>
-        <p>Temperature: {current.temp_c}°C ({current.temp_f}°F)</p>
-        <p>Condition: {current.condition?.text}</p>
-        <p>Feels like: {current.feelslike_c}°C ({current.feelslike_f}°F)</p>
-        <p>Humidity: {current.humidity}%</p>
-        <p>Wind: {current.wind_kph} km/h ({current.wind_dir})</p>
-        <p>Pressure: {current.pressure_mb} mb</p>
-        <p>UV Index: {current.uv}</p>
-        {current.condition?.icon && (
-          <img src={current.condition.icon} alt={current.condition.text} />
-        )}
+    <div className="text-center">
+      <h2 className="text-xl font-semibold">Current Weather</h2>
+      <h3 className="mt-1 text-2xl font-bold">{city}{country ? `, ${country}` : ''}</h3>
+      <div className="mt-3 flex items-center justify-center gap-4">
+        <img src={icon} alt={description} className="w-14 h-14" />
+        <div>
+          <div className="text-4xl font-bold">{tempF}°F</div>
+          <div className="capitalize text-muted-foreground">{description}</div>
+          <div className="text-sm mt-1">Feels like {feelsLikeF}°F</div>
+          <div className="text-sm mt-1">Humidity {humidity}% • Wind {windMph} mph</div>
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CityInfo;
+export default CityInfo

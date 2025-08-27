@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ModeToggle } from './components/ui/mode-toggle'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs'
-import { HomePage } from './components/HomePage'
+import HomePage from './components/HomePage'
 import { AboutPage } from './components/AboutPage'
 import { ApiPage } from './components/ApiPage'
 import { CloudSun } from 'lucide-react'
