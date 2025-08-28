@@ -1,7 +1,26 @@
-node_modules
-dist
+# Node / Next build artifacts
+node_modules/
+.next/
+dist/
+build/
+out/
+
+# Environment and secrets
 .env
 .env.*
-*.log
-.vscode
+
+# TLS / certs
+TLS/
+letsencrypt/
+
+# OS/editor junk
 .DS_Store
+*.swp
+*.swo
+
+# Markdown
+*.md
+!README.md
+
+# JSON
+*.json
