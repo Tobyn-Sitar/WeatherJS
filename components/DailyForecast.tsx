@@ -1,7 +1,32 @@
-import React from "react"
+import Image from 'next/image'
 import { Card, CardContent } from "@/components/ui/card"
 
-export default function DailyForecast({ days, onSelect }) {
+interface HourlyData {
+  dt: number
+  time: string
+  tempF: number
+  windMph: number
+  humidity: number
+  description: string
+  icon: string
+}
+
+interface ForecastDay {
+  date: string
+  dayOfWeek: string
+  icon: string
+  description: string
+  minF: number
+  maxF: number
+  hourlyData: HourlyData[]
+}
+
+interface DailyForecastProps {
+  days?: ForecastDay[]
+  onSelect: (day: ForecastDay) => void
+}
+
+export default function DailyForecast({ days, onSelect }: DailyForecastProps) {
   if (!days?.length) return null
   return (
     <div className="mt-6">
@@ -20,7 +45,7 @@ export default function DailyForecast({ days, onSelect }) {
             >
               <CardContent className="p-3 text-center">
                 <div className="font-medium">{d.dayOfWeek}</div>
-                <img src={d.icon} alt={d.description} className="mx-auto w-12 h-12" />
+                <Image src={d.icon} alt={d.description} width={48} height={48} className="mx-auto" />
                 <div className="text-sm capitalize">{d.description}</div>
                 <div className="text-sm mt-1">{d.maxF}° / {d.minF}°</div>
               </CardContent>

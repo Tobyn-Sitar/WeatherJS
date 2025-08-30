@@ -1,10 +1,30 @@
-import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Badge } from './ui/badge'
-import { Code, Database, Key, Zap, Shield, Globe } from 'lucide-react'
+import { Code, Database, Key, Zap, Shield, Globe, LucideIcon } from 'lucide-react'
+
+interface Parameter {
+  name: string
+  type: string
+  required: boolean
+  description: string
+}
+
+interface Endpoint {
+  method: string
+  endpoint: string
+  description: string
+  parameters: Parameter[]
+  example: string
+}
+
+interface Feature {
+  icon: LucideIcon
+  title: string
+  description: string
+}
 
 export function ApiPage() {
-  const endpoints = [
+  const endpoints: Endpoint[] = [
     {
       method: "GET",
       endpoint: "/data/2.5/weather",
@@ -40,7 +60,7 @@ export function ApiPage() {
     }
   ]
 
-  const features = [
+  const features: Feature[] = [
     {
       icon: Database,
       title: "Comprehensive Data",

@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
-import { ModeToggle } from './components/ui/mode-toggle'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs'
-import HomePage from './components/HomePage'
-import { AboutPage } from './components/AboutPage'
-import { ApiPage } from './components/ApiPage'
+'use client'
+
+import { useState } from 'react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ModeToggle } from '@/components/ui/mode-toggle'
+import HomePage from '@/components/HomePage'
+import { AboutPage } from '@/components/AboutPage'
+import { ApiPage } from '@/components/ApiPage'
 import { CloudSun } from 'lucide-react'
 
-function App() {
+export default function MainPage() {
   const [activeTab, setActiveTab] = useState("home")
 
   const handleLogoClick = () => {
@@ -57,7 +59,7 @@ function App() {
       <footer className="border-t bg-card mt-32">
         <div className="container mx-auto px-4 py-6">
           <div className="text-center text-sm text-muted-foreground">
-            <p>© 2024 WeatherJS. Built with React, TailwindCSS, and ShadCN/UI.</p>
+            <p>© 2024 WeatherJS. Built with Next.js, TailwindCSS, and ShadCN/UI.</p>
             <p className="mt-1">
               Weather data provided by{' '}
               <a href="https://openweathermap.org/" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
@@ -70,5 +72,3 @@ function App() {
     </Tabs>
   )
 }
-
-export default App

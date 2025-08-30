@@ -1,9 +1,19 @@
-import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { CloudSun, Zap, Globe, Smartphone, Shield, Clock } from 'lucide-react'
+import { CloudSun, Zap, Globe, Smartphone, Shield, Clock, LucideIcon } from 'lucide-react'
+
+interface Feature {
+  icon: LucideIcon
+  title: string
+  description: string
+}
+
+interface Technology {
+  name: string
+  description: string
+}
 
 export function AboutPage() {
-  const features = [
+  const features: Feature[] = [
     {
       icon: Globe,
       title: "Global Coverage",
@@ -22,7 +32,7 @@ export function AboutPage() {
     {
       icon: Smartphone,
       title: "Modern Interface",
-      description: "Clean, responsive design built with React and ShadCN/UI components for the best user experience."
+      description: "Clean, responsive design built with Next.js and ShadCN/UI components for the best user experience."
     },
     {
       icon: Shield,
@@ -36,9 +46,9 @@ export function AboutPage() {
     }
   ]
 
-  const technologies = [
-    { name: "React 18", description: "Modern React with hooks and functional components" },
-    { name: "Vite", description: "Fast build tool and development server" },
+  const technologies: Technology[] = [
+    { name: "Next.js 15", description: "Full-stack React framework with API routes" },
+    { name: "TypeScript", description: "Type-safe development experience" },
     { name: "TailwindCSS", description: "Utility-first CSS framework" },
     { name: "ShadCN/UI", description: "Beautiful, accessible UI components" },
     { name: "Radix UI", description: "Low-level UI primitives" },

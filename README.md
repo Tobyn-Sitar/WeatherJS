@@ -44,8 +44,22 @@ WeatherJS is a modern weather app built with React, Vite, and TailwindCSS. It le
 ## Available Scripts
 
 * `npm run dev` – Start the development server
-* `npm run build` – Create a production build
+* `npm run build` – Create a production build (outputs to `dist/` directory)
 * `npm run preview` – Preview the production build locally
+
+## Building for Production
+
+To create a production build:
+
+```bash
+npm run build
+```
+
+This command:
+- Builds the React application using Vite
+- Optimizes and minifies the code
+- Creates static files in the `dist/` directory
+- The `dist/` folder contains all files needed for deployment
 
 ## Tech Stack
 

@@ -1,4 +1,4 @@
-import React from "react"
+import Image from 'next/image'
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,32 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 
-export default function HourlyForecast({ day, onOpenChange }) {
+interface HourlyData {
+  dt: number
+  time: string
+  tempF: number
+  windMph: number
+  humidity: number
+  description: string
+  icon: string
+}
+
+interface ForecastDay {
+  date: string
+  dayOfWeek: string
+  icon: string
+  description: string
+  minF: number
+  maxF: number
+  hourlyData: HourlyData[]
+}
+
+interface HourlyForecastProps {
+  day: ForecastDay | null
+  onOpenChange: (open: boolean) => void
+}
+
+export default function HourlyForecast({ day, onOpenChange }: HourlyForecastProps) {
   const open = Boolean(day)
   const hourly = day?.hourlyData ?? []
 
@@ -28,7 +53,7 @@ export default function HourlyForecast({ day, onOpenChange }) {
             {hourly.map((h) => (
               <li key={h.dt} className="flex items-center justify-between py-2">
                 <div className="w-16">{h.time}</div>
-                <img src={h.icon} alt={h.description} className="w-8 h-8" />
+                <Image src={h.icon} alt={h.description} width={32} height={32} />
                 <div className="w-16 text-right">{h.tempF}°F</div>
                 <div className="w-24 text-right">{h.windMph} mph</div>
                 <div className="w-20 text-right">{h.humidity}%</div>

@@ -1,17 +1,32 @@
-import React from "react"
+'use client'
+
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { searchCities } from "@/lib/weather-api"
+import { searchCities } from "@/lib/api"
 
-export default function SearchInput({ onSearch }) {
-  const [q, setQ] = React.useState("")
-  const [suggestions, setSuggestions] = React.useState([])
-  const [showSuggestions, setShowSuggestions] = React.useState(false)
-  const [selectedIndex, setSelectedIndex] = React.useState(-1)
+interface City {
+  name: string
+  state: string
+  country: string
+  displayName: string
+  lat: number
+  lon: number
+}
 
-  const inputRef = React.useRef(null)
-  const suggestionsRef = React.useRef(null)
+interface SearchInputProps {
+  onSearch: (query: string) => void
+}
 
-  function submit(e) {
+export default function SearchInput({ onSearch }: SearchInputProps) {
+  const [q, setQ] = useState("")
+  const [suggestions, setSuggestions] = useState<City[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [selectedIndex, setSelectedIndex] = useState(-1)
+
+  const inputRef = useRef<HTMLInputElement>(null)
+  const suggestionsRef = useRef<HTMLDivElement>(null)
+
+  function submit(e: React.FormEvent) {
     e.preventDefault()
     const city = q.trim()
     if (city) {
@@ -21,7 +36,7 @@ export default function SearchInput({ onSearch }) {
     }
   }
 
-  function selectSuggestion(suggestion) {
+  function selectSuggestion(suggestion: City) {
     setQ(suggestion.displayName)
     onSearch?.(suggestion.displayName)
     setShowSuggestions(false)
@@ -29,7 +44,7 @@ export default function SearchInput({ onSearch }) {
     setSelectedIndex(-1)
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     const searchTimeout = setTimeout(async () => {
       if (q.trim().length < 2) {
         setSuggestions([])
@@ -51,7 +66,7 @@ export default function SearchInput({ onSearch }) {
     return () => clearTimeout(searchTimeout)
   }, [q])
 
-  function handleKeyDown(e) {
+  function handleKeyDown(e: React.KeyboardEvent) {
     if (!showSuggestions || suggestions.length === 0) return
 
     switch (e.key) {
@@ -89,10 +104,10 @@ export default function SearchInput({ onSearch }) {
     )
   }
 
-  React.useEffect(() => {
-    function handleClickOutside(event) {
-      if (inputRef.current && !inputRef.current.contains(event.target) &&
-          suggestionsRef.current && !suggestionsRef.current.contains(event.target)) {
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (inputRef.current && !inputRef.current.contains(event.target as Node) &&
+          suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
         setShowSuggestions(false)
         setSelectedIndex(-1)
       }
