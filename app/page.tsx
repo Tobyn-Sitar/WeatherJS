@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ModeToggle } from '@/components/ui/mode-toggle'
-import HomePage from '@/components/HomePage'
-import { AboutPage } from '@/components/AboutPage'
-import { ApiPage } from '@/components/ApiPage'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs'
+import { ModeToggle } from '@/app/components/ui/mode-toggle'
+import HomePage from '@/app/components/HomePage'
+import { AboutPage } from '@/app/components/AboutPage'
+import { ApiPage } from '@/app/components/ApiPage'
 import { CloudSun } from 'lucide-react'
 
 export default function MainPage() {

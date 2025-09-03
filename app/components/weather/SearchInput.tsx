@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { searchCities } from "@/lib/api"
+import { Button } from "@/app/components/ui/button"
+import { searchCities } from "@/app/lib/api"
 
 interface City {
   name: string
@@ -138,7 +138,7 @@ export default function SearchInput({ onSearch }: SearchInputProps) {
             >
               {suggestions.map((suggestion, index) => (
                 <button
-                  key={`${suggestion.name}-${suggestion.country}`}
+                  key={`${suggestion.name}-${suggestion.state || ''}-${suggestion.country}-${suggestion.lat}-${suggestion.lon}`}
                   type="button"
                   className={`w-full px-3 py-2 text-left hover:bg-muted transition-colors ${
                     index === selectedIndex ? 'bg-muted' : ''

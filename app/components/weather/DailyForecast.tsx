@@ -1,33 +1,22 @@
 import Image from 'next/image'
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@/app/components/ui/card"
+import { monthDayFromKey } from "@/app/lib/date"
+import type { ForecastDay, HourlyData } from "@/app/types/weather"
 
-interface HourlyData {
-  dt: number
-  time: string
-  tempF: number
-  windMph: number
-  humidity: number
-  description: string
-  icon: string
-}
-
-interface ForecastDay {
-  date: string
-  dayOfWeek: string
-  icon: string
-  description: string
-  minF: number
-  maxF: number
-  hourlyData: HourlyData[]
-}
 
 interface DailyForecastProps {
   days?: ForecastDay[]
   onSelect: (day: ForecastDay) => void
 }
 
+
 export default function DailyForecast({ days, onSelect }: DailyForecastProps) {
   if (!days?.length) return null
+  function weekdayFromKey(key: string) {
+    const [y, m, d] = key.split('-').map(Number)
+    const dt = new Date(Date.UTC(y, m - 1, d))
+    return dt.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' })
+  }
   return (
     <div className="mt-6">
       <h2 className="text-xl font-semibold mb-3">5-Day Forecast</h2>
@@ -44,7 +33,10 @@ export default function DailyForecast({ days, onSelect }: DailyForecastProps) {
               aria-label={`Open hourly forecast for ${d.dayOfWeek}`}
             >
               <CardContent className="p-3 text-center">
-                <div className="font-medium">{d.dayOfWeek}</div>
+                <div className="font-medium">{weekdayFromKey(d.date)}</div>
+                <div className="text-xs text-muted-foreground">
+                  {monthDayFromKey(d.date)}
+                </div>
                 <Image src={d.icon} alt={d.description} width={48} height={48} className="mx-auto" />
                 <div className="text-sm capitalize">{d.description}</div>
                 <div className="text-sm mt-1">{d.maxF}° / {d.minF}°</div>

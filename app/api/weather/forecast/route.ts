@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { localDateKey, weekdayFromKey } from '@/app/lib/date'
 
 const API_KEY = process.env.OPENWEATHER_API_KEY
 const BASE_URL = 'https://api.openweathermap.org'
@@ -43,14 +44,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function dateKeyFrom(dtSeconds: number, tzOffsetSeconds: number): string {
-  const ms = (dtSeconds + tzOffsetSeconds) * 1000
-  const d = new Date(ms)
-  const y = d.getUTCFullYear()
-  const m = String(d.getUTCMonth() + 1).padStart(2, '0')
-  const dd = String(d.getUTCDate()).padStart(2, '0')
-  return `${y}-${m}-${dd}`
-}
 
 function hourLabelFrom(dtSeconds: number, tzOffsetSeconds: number): string {
   const ms = (dtSeconds + tzOffsetSeconds) * 1000
@@ -63,12 +56,26 @@ function normalizeForecastList(list: any[], tzOffsetSeconds: number = 0) {
   const byDate: Record<string, any[]> = {}
   
   for (const item of list) {
-    const key = dateKeyFrom(item.dt, tzOffsetSeconds)
+    const key = localDateKey(item.dt, tzOffsetSeconds)
     if (!byDate[key]) byDate[key] = []
     byDate[key].push(item)
   }
 
-  const days = Object.keys(byDate).slice(0, 5).map(date => {
+  const today = localDateKey(Math.floor(Date.now() / 1000), tzOffsetSeconds)
+  const sortedDates = Object.keys(byDate).sort()
+  
+  // Ensure we include today if it has data, otherwise start from the first available date
+  let datesToUse = sortedDates
+  if (!sortedDates.includes(today) && sortedDates.length > 0) {
+    // If today isn't available, just use the next 5 days
+    datesToUse = sortedDates.slice(0, 5)
+  } else {
+    // Include today and the next days up to 5 total
+    const todayIndex = sortedDates.indexOf(today)
+    datesToUse = sortedDates.slice(todayIndex >= 0 ? todayIndex : 0, (todayIndex >= 0 ? todayIndex : 0) + 5)
+  }
+  
+  const days = datesToUse.map(date => {
     const entries = byDate[date]
     const noonish = entries.find(e => {
       const ms = (e.dt + tzOffsetSeconds) * 1000
@@ -80,8 +87,7 @@ function normalizeForecastList(list: any[], tzOffsetSeconds: number = 0) {
 
     return {
       date,
-      dayOfWeek: new Date((entries[0].dt + tzOffsetSeconds) * 1000)
-        .toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' }),
+      dayOfWeek: weekdayFromKey(date),
       icon: toIconUrl(noonish.weather[0].icon),
       description: noonish.weather[0].description,
       minF: Math.round(Math.min(...temps)),
