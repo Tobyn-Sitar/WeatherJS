@@ -83,28 +83,49 @@ This command:
 
 ```
 WeatherJS/
-├── public/
-│   ├── favicon.svg
-│   └── index.html
-├── src/
+├── app/                         # Next.js App Router
+│   ├── api/
+│   │   └── weather/             # API routes
+│   │       ├── current/
+│   │       │   └── route.ts     # Current weather endpoint
+│   │       ├── forecast/
+│   │       │   └── route.ts     # 5-day forecast endpoint
+│   │       ├── coords/
+│   │       │   └── route.ts     # Coordinates-based weather
+│   │       └── search/
+│   │           └── route.ts     # City search endpoint
 │   ├── components/
-│   │   ├── ui/                  # ShadCN UI components
-│   │   ├── CityInfo.jsx
-│   │   ├── DailyForecast.jsx
-│   │   ├── SearchBar.jsx
-│   │   ├── WeatherCard.jsx
-│   │   ├── WeatherDashboard.jsx
-│   │   └── theme-provider.jsx
+│   │   ├── ui/                  # ShadCN UI components (TypeScript)
+│   │   │   ├── badge.tsx
+│   │   │   ├── button.tsx
+│   │   │   ├── card.tsx
+│   │   │   ├── dialog.tsx
+│   │   │   ├── input.tsx
+│   │   │   ├── mode-toggle.tsx
+│   │   │   └── tabs.tsx
+│   │   ├── weather/             # Weather-specific components
+│   │   │   ├── CityInfo.tsx
+│   │   │   ├── DailyForecast.tsx
+│   │   │   ├── HourlyForecast.tsx
+│   │   │   └── SearchInput.tsx
+│   │   ├── layout/
+│   │   │   └── theme-provider.tsx
+│   │   ├── HomePage.tsx         # Main weather dashboard
+│   │   ├── AboutPage.tsx
+│   │   └── ApiPage.tsx
 │   ├── lib/
-│   │   ├── utils.js             # General utilities
-│   │   ├── weather-api.js       # Handles API calls
-│   │   └── weather-utils.js     # Data formatting and helpers
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── index.css
-├── tailwind.config.js
-├── vite.config.js
+│   │   ├── api.ts               # Client-side API functions
+│   │   ├── utils.ts             # General utilities
+│   │   └── date.ts              # Date formatting helpers
+│   ├── types/
+│   │   └── weather.ts           # TypeScript interfaces
+│   ├── globals.css              # Global styles and CSS variables
+│   ├── layout.tsx               # Root layout with providers
+│   └── page.tsx                 # Main page with tab navigation
+├── tailwind.config.js           # Tailwind configuration
 ├── components.json              # ShadCN configuration
+├── tsconfig.json                # TypeScript configuration
+├── next.config.js               # Next.js configuration
 └── package.json
 ```
 
@@ -124,11 +145,13 @@ This app uses OpenWeatherMap to fetch:
 
 ## Styling and Themes
 
-The UI is styled using TailwindCSS and ShadCN. You can customize the theme colors and layout through:
+The UI is styled using TailwindCSS and ShadCN/UI components with TypeScript. You can customize the theme colors and layout through:
 
-* `index.css` – Custom properties for theming
-* `tailwind.config.js` – Tailwind configuration
-* `components.json` – ShadCN component settings
+* `app/globals.css` – CSS custom properties for light/dark theme variables
+* `tailwind.config.js` – Tailwind configuration with TypeScript path mappings
+* `components.json` – ShadCN component settings and aliases
+
+The theming system uses CSS variables defined in `app/globals.css` with HSL color values for both light and dark modes. All components are built with TypeScript (.tsx files) and use the ShadCN design system.
 
 ## Deployment
 
